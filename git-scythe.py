@@ -48,34 +48,39 @@ class Node:
 		
 		for line in generator:
 			opening_tag = re.match('^ *<([A-Z0-9_]+)(.*)$', line)
-			attribute = re.match('^ +([A-Z0-9_]+) (.*)$', line)
-			base64 = re.match('^ +[A-Za-z0-9+/]+={0,2}$', line)
-			midi = re.match('^ +([Ee]) (.*)$', line)
-			code = re.match('^ +\|(.*)$', line)
-			fx_params = re.match('^ +(.*)(?:- )+$', line)
 			closing_tag = re.match('^ *>$', line)
 			
-			if midi:
-				pass
-			elif attribute:
-				name, values = attribute.groups()
-				values = split(values)
-				self.attributes[name] = values
-#				new_attribute = Attribute(name, values)
-#				self.attributes.append(new_attribute)
-			elif base64:
-				pass
-			elif code:
-				pass
-			elif fx_params:
-				pass
-			elif closing_tag:
-				break
-			elif opening_tag:
+			if opening_tag:
 				child = Node(line, generator)
 				self.children.append(child)
+			elif closing_tag:
+				break
 			else:
-				print('could not parse the following line:\n' + line, file = sys.stderr)
+				self.parse_line(line)
+	
+	def parse_line(self, line):
+		attribute = re.match('^ +([A-Z0-9_]+) (.*)$', line)
+		base64 = re.match('^ +[A-Za-z0-9+/]+={0,2}$', line)
+		midi = re.match('^ +([Ee]) (.*)$', line)
+		code = re.match('^ +\|(.*)$', line)
+		fx_params = re.match('^ +(.*)(?:- )+$', line)
+		
+		if midi:
+			pass
+		elif attribute:
+			name, values = attribute.groups()
+			values = split(values)
+			self.attributes[name] = values
+#			new_attribute = Attribute(name, values)
+#			self.attributes.append(new_attribute)
+		elif base64:
+			pass
+		elif code:
+			pass
+		elif fx_params:
+			pass
+		else:
+			print('could not parse the following line:\n' + line, file = sys.stderr)
 	
 	def __repr__(self):
 		return f'<Node "{self.name}">'
