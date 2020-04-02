@@ -27,7 +27,7 @@ class Tree:
 	@classmethod
 	def fromGenerator(cls, generator):
 		firstline = next(generator)
-		if re.match('^<[A-Z_]+.*$', firstline):
+		if firstline.startswith('<REAPER_PROJECT'):
 			tree_instance = cls()
 			tree_instance.root = Node(firstline, generator)
 			return tree_instance
