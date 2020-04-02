@@ -27,7 +27,7 @@ class Tree:
 	@classmethod
 	def fromGenerator(cls, generator):
 		firstline = next(generator)
-		if re.match('^<([A-Z_]+)(.*)$', firstline):
+		if re.match('^<[A-Z_]+.*$', firstline):
 			tree_instance = cls()
 			tree_instance.root = Node(firstline, generator)
 			return tree_instance
@@ -35,7 +35,7 @@ class Tree:
 			sys.exit('this does not seem to be a reaper file')
 	
 	def print(self):
-		self.root.print(1)
+		self.root.print()
 
 
 class Node:
@@ -48,17 +48,26 @@ class Node:
 		
 		for line in generator:
 			opening_tag = re.match('^ *<([A-Z0-9_]+)(.*)$', line)
-			attribute = re.match('^ *([A-Z0-9_]+) (.*)$', line)
-			base64 = re.match('^ *[A-Za-z0-9+/]+={0,2}$', line)
+			attribute = re.match('^ +([A-Z0-9_]+) (.*)$', line)
+			base64 = re.match('^ +[A-Za-z0-9+/]+={0,2}$', line)
+			midi = re.match('^ +([Ee]) (.*)$', line)
+			code = re.match('^ +\|(.*)$', line)
+			fx_params = re.match('^ +(.*)(?:- )+$', line)
 			closing_tag = re.match('^ *>$', line)
 			
-			if attribute:
+			if midi:
+				pass
+			elif attribute:
 				name, values = attribute.groups()
 				values = split(values)
 				self.attributes[name] = values
 #				new_attribute = Attribute(name, values)
 #				self.attributes.append(new_attribute)
 			elif base64:
+				pass
+			elif code:
+				pass
+			elif fx_params:
 				pass
 			elif closing_tag:
 				break
@@ -71,10 +80,21 @@ class Node:
 	def __repr__(self):
 		return f'<Node "{self.name}">'
 	
-	def print(self, indent):
-		print('  ' * indent + self.name)
+	def print(self, level = 0):
+		print(
+			'  ' * level +
+			'<' + self.name +
+			' ' + ' '.join(self.tags)
+		)
+		for name, values in self.attributes.items():
+			print(
+				'  ' * (level + 1) +
+				name +
+				' ' + ' '.join(values)
+			)
 		for child in self.children:
-			child.print(indent + 1)
+			child.print(level + 1)
+		print('  ' * level + '>')
 
 
 class Attribute:
@@ -91,8 +111,7 @@ def tree(arguments):
 	parser.add_argument('input')
 	args = parser.parse_args(arguments)
 	
-	tree = Tree.fromFilepath(args.input)
-	tree.print()
+	Tree.fromFilepath(args.input).print()
 
 
 if __name__ == '__main__':

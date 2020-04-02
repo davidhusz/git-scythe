@@ -1,0 +1,12 @@
+<TOP TAG_ONE TAG_TWO
+  <MIDDLE 
+    ATTR_ONE 1
+    ATTR_TWO 2
+  >
+  <MIDDLE 
+    ATTR_THREE 3
+    ATTR_FOUR 4
+    <BOTTOM 
+    >
+  >
+>
