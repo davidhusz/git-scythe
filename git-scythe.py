@@ -127,6 +127,17 @@ def tree(cli_args):
 	
 	Tree.fromFilepath(args.input).print()
 
+def paths(cli_args):
+	parser = argparse.ArgumentParser()
+	parser.add_argument('input', nargs = '?')
+	parser.add_argument('--relativize', action = 'store_true')
+	parser.add_argument('--depth', type = int, default = 1)
+	args = parser.parse_args(cli_args)
+
+	for source in Tree.fromFilepath(args.input).root.find('SOURCE', recursive = True):
+		if 'FILE' in source.attributes:
+			print(source.attributes['FILE'][0])
+
 
 if __name__ == '__main__':
 	if sys.argv[1] == 'tree':
