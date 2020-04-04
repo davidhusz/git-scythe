@@ -8,6 +8,8 @@
 # what about 'TAKE'?
 
 
+from config import config
+
 import sys
 import os
 import subprocess
@@ -127,23 +129,11 @@ class ScytheParser(argparse.ArgumentParser):
 		super().__init__(add_help = False)
 		self.add_argument('input', nargs = '?')
 
-	def parse_args(self, *arguments):
-		args = super().parse_args(*arguments)
+	def parse_args(self, arguments):
+		args = super().parse_args(arguments)
 
 		if not args.input:
-			try:
-				missinginputwarning = subprocess.run(
-					['git', 'config', '--get', 'scythe.missinginputwarning'],
-					capture_output = True,
-					text = True,
-					check = True
-				).stdout.strip()
-			except subprocess.CalledProcessError:
-				subprocess.run(
-					['git', 'config', '--add', 'scythe.missinginputwarning', 'true']
-				)
-				missinginputwarning = 'true'
-
+			missinginputwarning = config.get('missinginputwarning', default = 'true')
 			if missinginputwarning == 'true':
 				print(
 					'you did not specify an input file, will use last accessed file\n'
