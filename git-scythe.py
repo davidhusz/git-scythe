@@ -154,13 +154,13 @@ def tree():
 	print(f'Tree for {args.input}:')
 	Tree.fromFilepath(args.input).print()
 
-def paths(cli_args):
-	parser = argparse.ArgumentParser()
-	parser.add_argument('input', nargs = '?')
+def paths():
+	parser = ScytheParser()
 	parser.add_argument('--relativize', action = 'store_true')
 	parser.add_argument('--depth', type = int, default = 1)
-	args = parser.parse_args(cli_args)
+	args = parser.parse_args()
 
+	print(f'File paths found in {args.input}:')
 	for source in Tree.fromFilepath(args.input).root.find('SOURCE', recursive = True):
 		if 'FILE' in source.attributes:
 			print(source.attributes['FILE'][0])
@@ -172,14 +172,13 @@ def help(file = sys.stdout):
 if __name__ == '__main__':
 	if len(sys.argv) > 1:
 		module = sys.argv[1]
-		arguments = sys.argv[2:]
 	else:
 		module = 'help'
 
 	if module == 'tree':
-		tree(arguments)
+		tree()
 	elif module == 'paths':
-		paths(arguments)
+		paths()
 	elif module == 'help':
 		help()
 	else:
