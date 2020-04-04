@@ -120,10 +120,10 @@ class Attribute:
 		return f'<Attribute "{self.name}">'
 
 
-def tree(arguments):
+def tree(cli_args):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('input')
-	args = parser.parse_args(arguments)
+	args = parser.parse_args(cli_args)
 	
 	Tree.fromFilepath(args.input).print()
 
