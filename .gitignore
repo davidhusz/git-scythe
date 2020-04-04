@@ -1,3 +1,4 @@
 # ignore example input files
 *.RPP
 *.rpp
+__pycache__/
