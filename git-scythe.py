@@ -138,7 +138,23 @@ def paths(cli_args):
 		if 'FILE' in source.attributes:
 			print(source.attributes['FILE'][0])
 
+def help(file = sys.stdout):
+	print('help page should be printed here', file = file)
+
 
 if __name__ == '__main__':
-	if sys.argv[1] == 'tree':
-		tree(sys.argv[2:])
+	if len(sys.argv) > 1:
+		module = sys.argv[1]
+		arguments = sys.argv[2:]
+	else:
+		module = 'help'
+	
+	if module == 'tree':
+		tree(arguments)
+	elif module == 'paths':
+		paths(arguments)
+	elif module == 'help':
+		help()
+	else:
+		print('unknown module', file = sys.stderr)
+		help(file = sys.stderr)
