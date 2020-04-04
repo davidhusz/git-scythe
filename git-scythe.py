@@ -5,6 +5,7 @@
 # find out remaining types of lines
 # useful command for that:
 #	find . -name *.RPP -size -100k -exec py ~/Documents/git-scythe/git-scythe.py tree {} > /dev/null \;
+# what about 'TAKE'?
 
 
 import sys
