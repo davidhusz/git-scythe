@@ -148,7 +148,7 @@ class ScytheParser(argparse.ArgumentParser):
 		return args
 
 
-def tree(cli_args):
+def tree():
 	args = ScytheParser().parse_args()
 
 	print(f'Tree for {args.input}:')
