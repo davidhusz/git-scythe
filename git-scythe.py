@@ -86,6 +86,14 @@ class Node:
 	def __repr__(self):
 		return f'<Node "{self.name}">'
 	
+	def find(self, query, recursive = False):
+		for child in self.children:
+			if recursive:
+				for match in child.find(query, recursive = True):
+					yield match
+			if child.name == query:
+				yield child
+	
 	def print(self, level = 0):
 		print(
 			'  ' * level +
