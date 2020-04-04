@@ -129,8 +129,8 @@ class ScytheParser(argparse.ArgumentParser):
 		super().__init__(add_help = False)
 		self.add_argument('input', nargs = '?')
 
-	def parse_args(self, arguments):
-		args = super().parse_args(arguments)
+	def parse_args(self):
+		args = super().parse_args(sys.argv[2:])
 
 		if not args.input:
 			missinginputwarning = config.get('missinginputwarning', default = 'true')
@@ -149,10 +149,9 @@ class ScytheParser(argparse.ArgumentParser):
 
 
 def tree(cli_args):
-	parser = argparse.ArgumentParser()
-	parser.add_argument('input')
-	args = parser.parse_args(cli_args)
+	args = ScytheParser().parse_args()
 
+	print(f'Tree for {args.input}:')
 	Tree.fromFilepath(args.input).print()
 
 def paths(cli_args):
