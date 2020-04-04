@@ -21,12 +21,12 @@ class Tree:
 		if inputstr:
 			generator = (line for line in inputstr.splitlines())
 			return Tree.fromGenerator(generator)
-	
+
 	@classmethod
 	def fromFilepath(cls, filepath):
 		with open(filepath) as file:
 			return cls.fromGenerator(file)
-	
+
 	@classmethod
 	def fromGenerator(cls, generator):
 		firstline = next(generator)
@@ -36,7 +36,7 @@ class Tree:
 			return tree_instance
 		else:
 			sys.exit('this does not seem to be a reaper file')
-	
+
 	def print(self):
 		self.root.print()
 
@@ -48,11 +48,11 @@ class Node:
 		self.attributes = {}
 #		self.attributes = []
 		self.children = []
-		
+
 		for line in generator:
 			opening_tag = re.match('^ *<([A-Z0-9_]+)(.*)$', line)
 			closing_tag = re.match('^ *>$', line)
-			
+
 			if opening_tag:
 				child = Node(line, generator)
 				self.children.append(child)
@@ -60,14 +60,14 @@ class Node:
 				break
 			else:
 				self.parse_line(line)
-	
+
 	def parse_line(self, line):
 		attribute = re.match('^ +([A-Z0-9_]+) (.*)$', line)
 		base64 = re.match('^ +[A-Za-z0-9+/]+={0,2}$', line)
 		midi = re.match('^ +([Ee]) (.*)$', line)
 		code = re.match('^ +\|(.*)$', line)
 		fx_params = re.match('^ +(.*)(?:- )+$', line)
-		
+
 		if midi:
 			pass
 		elif attribute:
@@ -84,10 +84,10 @@ class Node:
 			pass
 		else:
 			print('could not parse the following line:\n' + line, file = sys.stderr)
-	
+
 	def __repr__(self):
 		return f'<Node "{self.name}">'
-	
+
 	def find(self, query, recursive = False):
 		for child in self.children:
 			if recursive:
@@ -95,7 +95,7 @@ class Node:
 					yield match
 			if child.name == query:
 				yield child
-	
+
 	def print(self, level = 0):
 		print(
 			'  ' * level +
@@ -117,7 +117,7 @@ class Attribute:
 	def __init__(self, name, values):
 		self.name = name
 		self.values = values
-	
+
 	def __repr__(self):
 		return f'<Attribute "{self.name}">'
 
@@ -126,10 +126,10 @@ class ScytheParser(argparse.ArgumentParser):
 	def __init__(self):
 		super().__init__(add_help = False)
 		self.add_argument('input', nargs = '?')
-	
+
 	def parse_args(self, *arguments):
 		args = super().parse_args(*arguments)
-		
+
 		if not args.input:
 			try:
 				missinginputwarning = subprocess.run(
@@ -143,7 +143,7 @@ class ScytheParser(argparse.ArgumentParser):
 					['git', 'config', '--add', 'scythe.missinginputwarning', 'true']
 				)
 				missinginputwarning = 'true'
-			
+
 			if missinginputwarning == 'true':
 				print(
 					'you did not specify an input file, will use last accessed file\n'
@@ -151,10 +151,10 @@ class ScytheParser(argparse.ArgumentParser):
 					'git config scythe.missinginputwarning false',
 					file = sys.stderr
 				)
-			
+
 			files = filter(os.path.isfile, os.listdir())
 			args.input = max(files, key = os.path.getatime)
-		
+
 		return args
 
 
@@ -162,7 +162,7 @@ def tree(cli_args):
 	parser = argparse.ArgumentParser()
 	parser.add_argument('input')
 	args = parser.parse_args(cli_args)
-	
+
 	Tree.fromFilepath(args.input).print()
 
 def paths(cli_args):
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 		arguments = sys.argv[2:]
 	else:
 		module = 'help'
-	
+
 	if module == 'tree':
 		tree(arguments)
 	elif module == 'paths':
