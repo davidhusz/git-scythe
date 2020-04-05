@@ -205,7 +205,7 @@ class modules:
 
 		tree = Tree.fromFilepath(args.input)
 		print(f'File paths found in {args.input}:')
-		for source in tree.root.find('SOURCE', recursive = True):
+		for source in tree.root.find('TRACK/ITEM/SOURCE'):
 			if 'FILE' in source.attributes:
 				print(source.attributes['FILE'][0])
 
