@@ -96,10 +96,10 @@ class Node:
 
 	def find(self, query, recursive = False):
 		if '/' in query:
-			anchor = self
-			for item in query.split('/'):
-				anchor = next(anchor.find(item))
-			yield anchor
+			topitem, query = query.split('/', maxsplit = 1)
+			for topmatch in self.find(topitem):
+				for match in topmatch.find(query):
+					yield match
 
 		for child in self.children:
 			if recursive:
