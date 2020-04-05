@@ -95,6 +95,12 @@ class Node:
 		return f'<Node "{self.name}">'
 
 	def find(self, query, recursive = False):
+		if '/' in query:
+			anchor = self
+			for item in query.split('/'):
+				anchor = next(anchor.find(item))
+			yield anchor
+
 		for child in self.children:
 			if recursive:
 				for match in child.find(query, recursive = True):
