@@ -37,9 +37,9 @@ class Tree:
 	def fromGenerator(cls, generator):
 		firstline = next(generator)
 		assert firstline.startswith('<REAPER_PROJECT'), 'not a reaper project'
-		tree_instance = cls()
-		tree_instance.root = Node(firstline, generator)
-		return tree_instance
+		tree = cls()
+		tree.root = Node(firstline, generator)
+		return tree
 
 	def print(self):
 		self.root.print()
@@ -144,6 +144,7 @@ class ScytheParser(argparse.ArgumentParser):
 					file = sys.stderr
 				)
 
+			files = [file for file in os.listdir() if file.endswith]
 			files = filter(os.path.isfile, os.listdir())
 			args.input = max(files, key = os.path.getatime)
 
@@ -194,8 +195,9 @@ class modules:
 		parser.add_argument('--depth', type = int, default = 1)
 		args = parser.parse_args()
 
+		tree = Tree.fromFilepath(args.input)
 		print(f'File paths found in {args.input}:')
-		for source in Tree.fromFilepath(args.input).root.find('SOURCE', recursive = True):
+		for source in tree.root.find('SOURCE', recursive = True):
 			if 'FILE' in source.attributes:
 				print(source.attributes['FILE'][0])
 
