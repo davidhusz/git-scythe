@@ -185,8 +185,9 @@ class modules:
 	def tree():
 		args = ScytheParser().parse_args()
 
+		tree = Tree.fromFilepath(args.input)
 		print(f'Tree for {args.input}:')
-		Tree.fromFilepath(args.input).print()
+		tree.print()
 
 	@staticmethod
 	def paths():
