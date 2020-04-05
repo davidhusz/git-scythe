@@ -152,25 +152,35 @@ class ScytheParser(argparse.ArgumentParser):
 		return args
 
 
-def tree():
-	args = ScytheParser().parse_args()
+class modules:
+	'''
+	this class serves only as a sort of grouping
+	for the functions associated with the various
+	command line options. Hence the lowercase name
+	and all the methods being static
+	'''
+	@staticmethod
+	def tree():
+		args = ScytheParser().parse_args()
 
-	print(f'Tree for {args.input}:')
-	Tree.fromFilepath(args.input).print()
+		print(f'Tree for {args.input}:')
+		Tree.fromFilepath(args.input).print()
 
-def paths():
-	parser = ScytheParser()
-	parser.add_argument('--relativize', action = 'store_true')
-	parser.add_argument('--depth', type = int, default = 1)
-	args = parser.parse_args()
+	@staticmethod
+	def paths():
+		parser = ScytheParser()
+		parser.add_argument('--relativize', action = 'store_true')
+		parser.add_argument('--depth', type = int, default = 1)
+		args = parser.parse_args()
 
-	print(f'File paths found in {args.input}:')
-	for source in Tree.fromFilepath(args.input).root.find('SOURCE', recursive = True):
-		if 'FILE' in source.attributes:
-			print(source.attributes['FILE'][0])
+		print(f'File paths found in {args.input}:')
+		for source in Tree.fromFilepath(args.input).root.find('SOURCE', recursive = True):
+			if 'FILE' in source.attributes:
+				print(source.attributes['FILE'][0])
 
-def help(file = sys.stdout):
-	print('help page should be printed here', file = file)
+	@staticmethod
+	def help(file = sys.stdout):
+		print('help page should be printed here', file = file)
 
 
 if __name__ == '__main__':
@@ -180,11 +190,11 @@ if __name__ == '__main__':
 		module = 'help'
 
 	if module == 'tree':
-		tree()
+		modules.tree()
 	elif module == 'paths':
-		paths()
+		modules.paths()
 	elif module == 'help':
-		help()
+		modules.help()
 	else:
 		print('unknown module', file = sys.stderr)
-		help(file = sys.stderr)
+		modules.help(file = sys.stderr)
