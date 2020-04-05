@@ -22,22 +22,26 @@ class Tree:
 	def __init__(self, inputstr = None):
 		if inputstr:
 			generator = (line for line in inputstr.splitlines())
-			return Tree.fromGenerator(generator)
+			try:
+				return Tree.fromGenerator(generator)
+			except AssertionError:
+				sys.exit('this does not seem to be a reaper project')
 
 	@classmethod
 	def fromFilepath(cls, filepath):
 		with open(filepath) as file:
-			return cls.fromGenerator(file)
+			try:
+				return cls.fromGenerator(file)
+			except AssertionError:
+				sys.exit(f'{filepath} does not seem to be a reaper project')
 
 	@classmethod
 	def fromGenerator(cls, generator):
 		firstline = next(generator)
-		if firstline.startswith('<REAPER_PROJECT'):
-			tree_instance = cls()
-			tree_instance.root = Node(firstline, generator)
-			return tree_instance
-		else:
-			sys.exit('this does not seem to be a reaper file')
+		assert firstline.startswith('<REAPER_PROJECT'), 'not a reaper project'
+		tree_instance = cls()
+		tree_instance.root = Node(firstline, generator)
+		return tree_instance
 
 	def print(self):
 		self.root.print()
