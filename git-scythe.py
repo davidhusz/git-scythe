@@ -13,6 +13,7 @@ import os
 import subprocess
 import re
 from shlex import split
+from glob import glob
 import argparse
 
 
@@ -144,8 +145,7 @@ class ScytheParser(argparse.ArgumentParser):
 					file = sys.stderr
 				)
 
-			files = [file for file in os.listdir() if file.endswith]
-			files = filter(os.path.isfile, os.listdir())
+			files = filter(os.path.isfile, glob('*.RPP'))
 			args.input = max(files, key = os.path.getatime)
 
 		return args
