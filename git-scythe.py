@@ -100,13 +100,13 @@ class Node:
 			for topmatch in self.find(topitem):
 				for match in topmatch.find(query):
 					yield match
-
-		for child in self.children:
-			if recursive:
-				for match in child.find(query, recursive = True):
-					yield match
-			if child.name == query:
-				yield child
+		else:
+			for child in self.children:
+				if recursive:
+					for match in child.find(query, recursive = True):
+						yield match
+				if child.name == query:
+					yield child
 
 	def print(self, level = 0):
 		print(
