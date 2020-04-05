@@ -8,7 +8,7 @@
 # what about 'TAKE'?
 
 
-from config import config
+import config
 
 import sys
 import os
