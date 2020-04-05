@@ -227,5 +227,5 @@ if __name__ == '__main__':
 	elif module == 'help':
 		modules.help()
 	else:
-		print('unknown module', file = sys.stderr)
+		print('unknown module:', module, file = sys.stderr)
 		modules.help(file = sys.stderr)
