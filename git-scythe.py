@@ -109,6 +109,23 @@ class Node:
 	@property
 	def children(self):
 		return filter(lambda x: isinstance(x, type(self)), self.contents)
+	
+	def __getitem__(self, key):
+		if key in self.attributes:
+			attribute = self.attributes[key]
+			if len(attribute) == 1:
+				return attribute[0]
+			else:
+				return attribute
+		else:
+			raise KeyError('ya dun goofed')
+	
+	def __contains__(self, key):
+		return key in self.attributes
+	
+	def __getattr__(self, name):
+		# return self.__getitem__(name)
+		pass
 
 	def __repr__(self):
 		return f'<Node "{self.name}">'
@@ -234,8 +251,8 @@ class modules:
 		for source in tree.findall('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # need to account for tags FILE, RENDER_FILE and RECORD_PATH
 		# alternatively:
 		# for source in tree.findall('SOURCE', recursive = True):
-			if 'FILE' in source.attributes:
-				print(source.attributes['FILE'][0])
+			if 'FILE' in source:
+				print(source['FILE'])
 
 	@staticmethod
 	def help(file = sys.stdout):
