@@ -43,15 +43,15 @@ class Tree:
 		tree.root = Node(firstline, generator)
 		return tree
 	
-	def find(self, query, recursive = False):
+	def findall(self, query, recursive = False):
 		if '/' in query:
 			head, _, query = query.partition('/')
 			if head == self.root.name:
-				return self.root.find(query, recursive = False)
+				return self.root.findall(query, recursive = False)
 			else:
 				return []
 		else:
-			return self.root.find(query, recursive)
+			return self.root.findall(query, recursive)
 
 	def print(self):
 		self.root.print()
@@ -110,16 +110,16 @@ class Node:
 	def __repr__(self):
 		return f'<Node "{self.name}">'
 
-	def find(self, query, recursive = False):
+	def findall(self, query, recursive = False):
 		if '/' in query:
 			topitem, query = query.split('/', maxsplit = 1)
-			for topmatch in self.find(topitem):
-				for match in topmatch.find(query):
+			for topmatch in self.findall(topitem):
+				for match in topmatch.findall(query):
 					yield match
 		else:
 			for child in self.children:
 				if recursive:
-					for match in child.find(query, recursive = True):
+					for match in child.findall(query, recursive = True):
 						yield match
 				if child.name == query:
 					yield child
@@ -228,9 +228,9 @@ class modules:
 
 		tree = Tree.fromFilepath(args.input)
 		print(f'File paths found in {args.input}:')
-		for source in tree.find('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # need to account for tags FILE, RENDER_FILE and RECORD_PATH
+		for source in tree.findall('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # need to account for tags FILE, RENDER_FILE and RECORD_PATH
 		# alternatively:
-		# for source in tree.find('SOURCE', recursive = True):
+		# for source in tree.findall('SOURCE', recursive = True):
 			if 'FILE' in source.attributes:
 				print(source.attributes['FILE'][0])
 
