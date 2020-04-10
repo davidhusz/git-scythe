@@ -60,10 +60,10 @@ class Tree:
 class Node:
 	def __init__(self, firstline, generator):
 		self.name, self.tags = re.match('^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
+		self.contents = [firstline]
 		self.tags = split(self.tags)
 		self.attributes = {}
 #		self.attributes = []
-		self.children = []
 
 		for line in generator:
 			opening_tag = re.match('^ *<([A-Z0-9_]+)(.*)$', line)
@@ -71,10 +71,12 @@ class Node:
 
 			if opening_tag:
 				child = Node(line, generator)
-				self.children.append(child)
+				self.contents.append(child)
 			elif closing_tag:
+				self.contents.append(line)
 				break
 			else:
+				self.contents.append(line)
 				self.parse_line(line)
 
 	def parse_line(self, line):
@@ -100,6 +102,10 @@ class Node:
 			pass
 		else:
 			print('could not parse the following line:\n' + line, file = sys.stderr)
+	
+	@property
+	def children(self):
+		return filter(lambda x: isinstance(x, type(self)), self.contents)
 
 	def __repr__(self):
 		return f'<Node "{self.name}">'
@@ -118,21 +124,28 @@ class Node:
 				if child.name == query:
 					yield child
 
-	def print(self, level = 0):
-		print(
-			'  ' * level +
-			'<' + self.name +
-			' ' + ' '.join(self.tags)
-		)
-		for name, values in self.attributes.items():
-			print(
-				'  ' * (level + 1) +
-				name +
-				' ' + ' '.join(values)
-			)
-		for child in self.children:
-			child.print(level + 1)
-		print('  ' * level + '>')
+	# def print(self, level = 0):
+		# print(
+		# 	'  ' * level +
+		# 	'<' + self.name +
+		# 	' ' + ' '.join(self.tags)
+		# )
+		# for name, values in self.attributes.items():
+		# 	print(
+		# 		'  ' * (level + 1) +
+		# 		name +
+		# 		' ' + ' '.join(values)
+		# 	)
+		# for child in self.children:
+		# 	child.print(level + 1)
+		# print('  ' * level + '>')
+	
+	def print(self):
+		for content in self.contents:
+			if isinstance(content, type(self)):
+				content.print()
+			else:
+				print(content, end = '')
 
 
 class Attribute:
