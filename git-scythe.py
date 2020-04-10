@@ -42,6 +42,16 @@ class Tree:
 		tree = cls()
 		tree.root = Node(firstline, generator)
 		return tree
+	
+	def find(self, query, recursive = False):
+		if '/' in query:
+			head, _, query = query.partition('/')
+			if head == self.root.name:
+				return self.root.find(query, recursive = False)
+			else:
+				return []
+		else:
+			return self.root.find(query, recursive)
 
 	def print(self):
 		self.root.print()
@@ -205,7 +215,9 @@ class modules:
 
 		tree = Tree.fromFilepath(args.input)
 		print(f'File paths found in {args.input}:')
-		for source in tree.root.find('TRACK/ITEM/SOURCE'):
+		for source in tree.find('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # for source in tree.find('SOURCE', recursive = True):
+		# need to account for tags FILE, RENDER_FILE and RECORD_PATH
+		# alternatively:
 			if 'FILE' in source.attributes:
 				print(source.attributes['FILE'][0])
 
