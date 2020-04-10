@@ -228,9 +228,9 @@ class modules:
 
 		tree = Tree.fromFilepath(args.input)
 		print(f'File paths found in {args.input}:')
-		for source in tree.find('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # for source in tree.find('SOURCE', recursive = True):
-		# need to account for tags FILE, RENDER_FILE and RECORD_PATH
+		for source in tree.find('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # need to account for tags FILE, RENDER_FILE and RECORD_PATH
 		# alternatively:
+		# for source in tree.find('SOURCE', recursive = True):
 			if 'FILE' in source.attributes:
 				print(source.attributes['FILE'][0])
 
