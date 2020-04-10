@@ -43,6 +43,9 @@ class Tree:
 		tree.root = Node(firstline, generator)
 		return tree
 	
+	def find(self, *args, **kwargs):
+		return next(self.findall(*args, **kwargs))
+	
 	def findall(self, query, recursive = False):
 		if '/' in query:
 			head, _, query = query.partition('/')
