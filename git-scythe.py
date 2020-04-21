@@ -235,10 +235,11 @@ class modules:
 	'''
 	@staticmethod
 	def tree():
-		args = ScytheParser().parse_args()
+		args = ScytheParser('tree').parse_args()
 
 		tree = Tree.fromFilepath(args.input)
-		print(f'Tree for {args.input}:')
+		if not args.quiet:
+			print(f'Tree for {args.input}:')
 		tree.print()
 
 	@staticmethod
