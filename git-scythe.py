@@ -218,8 +218,7 @@ class config:
 		except subprocess.CalledProcessError:
 			subprocess.run(
 				['git', 'config', '--add', 'scythe.' + key, default],
-				capture_output = True,
-				check = True
+				capture_output = True
 			)
 			value = default
 
