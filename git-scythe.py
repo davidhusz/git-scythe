@@ -290,6 +290,25 @@ class modules:
 			# git scythe paths: error: argument -d/--delimiter: expected one argument
 		
 	@staticmethod
+	def cleanup():
+		parser = ScytheParser('cleanup')
+		parser.add_argument('directory', nargs = '?', default = '.', dest = 'origin')  # default should actually be the path of the rpp file i suppose
+		parser.add_argument('--dry', action = 'store_true')  # dry run argument, might rename it still
+		args = parser.parse_args()
+		
+		tree = Tree.fromFilepath(args.input)
+		paths = tree.get_paths()  # not yet implemented
+		
+		for dirpath, dirnames, filenames in os.walk(args.origin):
+			# what you're gonna have to do here:
+			# canonicalize both `filenames` as well as `paths`
+			# (maybe rename that latter variable to something more explicit),
+			# then check which `filenames` do not appear in `paths`.
+			# perhaps provide an option to restrict the search to media files
+			# (based on the file extension)
+			pass
+	
+	@staticmethod
 	def help(file = sys.stdout):
 		print('help page should be printed here', file = file)
 
