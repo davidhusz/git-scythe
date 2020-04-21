@@ -13,8 +13,10 @@ import sys
 import os
 import subprocess
 import re
+import pathlib
 import shlex
 from glob import glob
+from itertools import filterfalse
 import argparse
 
 
@@ -244,19 +246,49 @@ class modules:
 
 	@staticmethod
 	def paths():
-		parser = ScytheParser()
-		parser.add_argument('--relativize', action = 'store_true')
-		parser.add_argument('--depth', type = int, default = 1)
+		parser = ScytheParser('paths')
+		parser.add_argument('-a', '--absolute', action = 'store_true')
+		parser.add_argument('-r', '--relative', action = 'store_true')
+		parser.add_argument('-f', '--format', action = 'store')
+			# POSIX/UNIX or DOS/WINDOWS
+			# default value same as in input, otherwise dependent on operating system
+			# have a look at maybe using the class argparse.ArgumentError
+			# for when it receives disallowed input
+		parser.add_argument('-d', '--delimiter', action = 'store', default = '\n')
+		parser.add_argument('-e', '--escape', action = 'store_true')  # it should be noted that this only really works for the UNIX shell
 		args = parser.parse_args()
 
 		tree = Tree.fromFilepath(args.input)
-		print(f'File paths found in {args.input}:')
-		for source in tree.findall('REAPER_PROJECT/TRACK/ITEM/SOURCE'):  # need to account for tags FILE, RENDER_FILE and RECORD_PATH
-		# alternatively:
-		# for source in tree.findall('SOURCE', recursive = True):
+		if not args.quiet:
+			print(f'File paths found in {args.input}:')
+		
+		paths = []
+		for source in tree.findall('SOURCE', recursive = True):
+			# you will also need to account for tags FILE, RENDER_FILE and RECORD_PATH
 			if 'FILE' in source:
-				print(source['FILE'])
-
+				sourcefile = source['FILE'][0]
+				if '/' in sourcefile:
+					path = pathlib.PurePosixPath(sourcefile)
+				elif '\\' in sourcefile:
+					path = pathlib.PureWindowsPath(sourcefile)
+				else:
+					path = pathlib.PurePath(sourcefile)
+				paths.append(path)
+		# so this entire loop should actually be in the function Tree.get_paths
+		
+		if args.absolute:
+			paths = filter(pathlib.PurePath.is_absolute, paths)
+		elif args.relative:
+			paths = filterfalse(pathlib.PurePath.is_absolute, paths)
+		
+		paths = map(str, paths)
+		if args.escape:
+			paths = map(shlex.quote, paths)
+			
+		print(args.delimiter.join(paths))
+			# for some reason, if this is called with `-d ' '`, it raises an error:
+			# git scythe paths: error: argument -d/--delimiter: expected one argument
+		
 	@staticmethod
 	def help(file = sys.stdout):
 		print('help page should be printed here', file = file)
