@@ -7,7 +7,7 @@
 #	find . -name *.RPP -size -100k -exec py ~/Documents/git-scythe/git-scythe.py tree {} > /dev/null \;
 # what about 'TAKE'?
 # handle empty input files gracefully
-
+# tbfo == "to be fleshed out"
 
 import sys
 import os
@@ -112,13 +112,14 @@ class Node:
 	
 	def __getitem__(self, key):
 		if key in self.attributes:
-			attribute = self.attributes[key]
-			if len(attribute) == 1:
-				return attribute[0]
-			else:
-				return attribute
+			# attribute = self.attributes[key]
+			# if len(attribute) == 1:
+			# 	return attribute[0]
+			# else:
+			# 	return attribute
+			return self.attributes[key]
 		else:
-			raise KeyError('ya dun goofed')
+			raise KeyError(f"item '{self.name}' contains no attribute '{key}'")  #tbfo
 	
 	def __contains__(self, key):
 		return key in self.attributes
