@@ -178,9 +178,11 @@ class Attribute:
 
 
 class ScytheParser(argparse.ArgumentParser):
-	def __init__(self):
-		super().__init__(add_help = False)
+	def __init__(self, module_name):
+		super().__init__(prog = 'git scythe ' + module_name, add_help = False)
 		self.add_argument('input', nargs = '?')
+		self.add_argument('-q', '--quiet', action = 'store_true')
+		self.add_argument('--help', action = 'help')
 
 	def parse_args(self):
 		args = super().parse_args(sys.argv[2:])
