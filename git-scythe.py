@@ -13,7 +13,7 @@ import sys
 import os
 import subprocess
 import re
-from shlex import split
+import shlex
 from glob import glob
 import argparse
 
@@ -64,7 +64,7 @@ class Node:
 	def __init__(self, firstline, generator):
 		self.name, self.tags = re.match('^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
 		self.contents = [firstline]
-		self.tags = split(self.tags)
+		self.tags = shlex.split(self.tags)
 		self.attributes = {}
 #		self.attributes = []
 
@@ -93,7 +93,7 @@ class Node:
 			pass
 		elif attribute:
 			name, values = attribute.groups()
-			values = split(values)
+			values = shlex.split(values)
 			self.attributes[name] = values
 #			new_attribute = Attribute(name, values)
 #			self.attributes.append(new_attribute)
