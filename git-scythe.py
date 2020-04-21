@@ -57,6 +57,21 @@ class Tree:
 				return []
 		else:
 			return self.root.findall(query, recursive)
+	
+	def get_source_paths(self):
+		paths = []
+		for source in self.findall('SOURCE', recursive = True):
+			# you will also need to account for tags FILE, RENDER_FILE and RECORD_PATH
+			if 'FILE' in source:
+				sourcefile = source['FILE'][0]
+				if '/' in sourcefile:
+					path = pathlib.PurePosixPath(sourcefile)
+				elif '\\' in sourcefile:
+					path = pathlib.PureWindowsPath(sourcefile)
+				else:
+					path = pathlib.PurePath(sourcefile)
+				paths.append(path)
+		return paths
 
 	def print(self):
 		self.root.print()
@@ -259,22 +274,7 @@ class modules:
 		args = parser.parse_args()
 
 		tree = Tree.fromFilepath(args.input)
-		if not args.quiet:
-			print(f'File paths found in {args.input}:')
-		
-		paths = []
-		for source in tree.findall('SOURCE', recursive = True):
-			# you will also need to account for tags FILE, RENDER_FILE and RECORD_PATH
-			if 'FILE' in source:
-				sourcefile = source['FILE'][0]
-				if '/' in sourcefile:
-					path = pathlib.PurePosixPath(sourcefile)
-				elif '\\' in sourcefile:
-					path = pathlib.PureWindowsPath(sourcefile)
-				else:
-					path = pathlib.PurePath(sourcefile)
-				paths.append(path)
-		# so this entire loop should actually be in the function Tree.get_paths
+		paths = tree.get_source_paths()
 		
 		if args.absolute:
 			paths = filter(pathlib.PurePath.is_absolute, paths)
@@ -285,6 +285,8 @@ class modules:
 		if args.escape:
 			paths = map(shlex.quote, paths)
 			
+		if not args.quiet:
+			print(f'File paths found in {args.input}:')
 		print(args.delimiter.join(paths))
 			# for some reason, if this is called with `-d ' '`, it raises an error:
 			# git scythe paths: error: argument -d/--delimiter: expected one argument
@@ -297,7 +299,7 @@ class modules:
 		args = parser.parse_args()
 		
 		tree = Tree.fromFilepath(args.input)
-		paths = tree.get_paths()  # not yet implemented
+		paths = tree.get_paths()
 		
 		for dirpath, dirnames, filenames in os.walk(args.origin):
 			# what you're gonna have to do here:
