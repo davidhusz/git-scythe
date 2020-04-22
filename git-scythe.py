@@ -62,6 +62,8 @@ class Tree:
 		paths = []
 		for source in self.findall('SOURCE', recursive = True):
 			# you will also need to account for tags FILE, RENDER_FILE and RECORD_PATH
+			# attributes: FILE (of tag SOURCE)
+			# tags: RENDER_FILE, RECORD_PATH
 			if 'FILE' in source:
 				sourcefile = source['FILE'][0]
 				if '/' in sourcefile:
