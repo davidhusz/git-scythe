@@ -28,7 +28,7 @@ class ReaperProject:
             try:
                 return ReaperProject.fromGenerator(generator)
             except AssertionError:
-                sys.exit('this does not seem to be a reaper project')
+                sys.exit('this does not seem to be a reaper project')  # tbfo
     
     @classmethod
     def fromFilepath(cls, filepath):
@@ -36,7 +36,7 @@ class ReaperProject:
             try:
                 return cls.fromGenerator(file)
             except AssertionError:
-                sys.exit(f'{filepath} does not seem to be a reaper project')
+                sys.exit(f'{filepath} does not seem to be a reaper project')  # tbfo
     
     @classmethod
     def fromGenerator(cls, generator):
@@ -139,7 +139,7 @@ class Node:
             #     return attribute
             return self.attributes[key]
         else:
-            raise KeyError(f"item '{self.name}' contains no attribute '{key}'")  #tbfo
+            raise KeyError(f"item '{self.name}' contains no attribute '{key}'")  # tbfo
     
     def __contains__(self, key):
         return key in self.attributes
