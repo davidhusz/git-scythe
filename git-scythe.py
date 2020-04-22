@@ -274,20 +274,20 @@ class modules:
 		args = parser.parse_args()
 
 		tree = Tree.fromFilepath(args.input)
-		paths = tree.get_source_paths()
+		source_paths = tree.get_source_paths()  # default: <empty path>
 		
 		if args.absolute:
-			paths = filter(pathlib.PurePath.is_absolute, paths)
+			source_paths = filter(pathlib.PurePath.is_absolute, source_paths)
 		elif args.relative:
-			paths = filterfalse(pathlib.PurePath.is_absolute, paths)
+			source_paths = filterfalse(pathlib.PurePath.is_absolute, source_paths)
 		
-		paths = map(str, paths)
+		source_paths = map(str, source_paths)
 		if args.escape:
-			paths = map(shlex.quote, paths)
-			
+			source_paths = map(shlex.quote, source_paths)
+		
 		if not args.quiet:
 			print(f'File paths found in {args.input}:')
-		print(args.delimiter.join(paths))
+		print(args.delimiter.join(source_paths))
 			# for some reason, if this is called with `-d ' '`, it raises an error:
 			# git scythe paths: error: argument -d/--delimiter: expected one argument
 		
@@ -299,13 +299,13 @@ class modules:
 		args = parser.parse_args()
 		
 		tree = Tree.fromFilepath(args.input)
-		paths = tree.get_paths()
+		source_paths = tree.get_paths()
 		
 		for dirpath, dirnames, filenames in os.walk(args.origin):
 			# what you're gonna have to do here:
-			# canonicalize both `filenames` as well as `paths`
+			# canonicalize both `filenames` as well as `source_paths`
 			# (maybe rename that latter variable to something more explicit),
-			# then check which `filenames` do not appear in `paths`.
+			# then check which `filenames` do not appear in `source_paths`.
 			# perhaps provide an option to restrict the search to media files
 			# (based on the file extension)
 			pass
