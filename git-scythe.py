@@ -309,7 +309,7 @@ class modules:
         args = parser.parse_args()
         
         reaperProject = ReaperProject.fromFilepath(args.input)
-        source_paths = reaperProject.get_paths()
+        source_paths = reaperProject.get_source_paths()
         
         for dirpath, dirnames, filenames in os.walk(args.origin):
             # what you're gonna have to do here:
