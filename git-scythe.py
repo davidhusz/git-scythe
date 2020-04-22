@@ -32,6 +32,10 @@ class ReaperProject:
     
     @classmethod
     def fromFilepath(cls, filepath):
+        if not os.path.exists(filepath):
+            sys.exit(f'{filepath} does not exist')  # tbfo
+        elif not os.path.isfile(filepath):
+            sys.exit(f'{filepath} is not a regular file (i.e. a directory or mount point or the like)')  # tbfo
         with open(filepath) as file:
             try:
                 return cls.fromGenerator(file)
