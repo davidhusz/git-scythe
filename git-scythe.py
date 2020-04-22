@@ -350,8 +350,13 @@ if __name__ == '__main__':
 		modules.tree()
 	elif module == 'paths':
 		modules.paths()
+	elif module == 'cleanup':
+		modules.cleanup()
 	elif module == 'help':
 		modules.help()
+	elif module == '--version':
+		print('0.0')
+		sys.exit()
 	else:
 		print('unknown module:', module, file = sys.stderr)
 		modules.help(file = sys.stderr)
