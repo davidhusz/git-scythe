@@ -86,15 +86,15 @@ class ReaperProject:
 
 class Node:
     def __init__(self, firstline, generator):
-        self.name, self.tags = re.match('^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
+        self.name, self.tags = re.match(r'^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
         self.contents = [firstline]
         self.tags = shlex.split(self.tags)
         self.attributes = {}
         # self.attributes = []
         
         for line in generator:
-            opening_tag = re.match('^ *<([A-Z0-9_]+)(.*)$', line)
-            closing_tag = re.match('^ *>$', line)
+            opening_tag = re.match(r'^ *<([A-Z0-9_]+)(.*)$', line)
+            closing_tag = re.match(r'^ *>$', line)
             
             if opening_tag:
                 child = Node(line, generator)
@@ -107,11 +107,11 @@ class Node:
                 self.parse_line(line)
     
     def parse_line(self, line):
-        attribute = re.match('^ +([A-Z0-9_]+) (.*)$', line)
-        base64 = re.match('^ +[A-Za-z0-9+/]+={0,2}$', line)
-        midi = re.match('^ +([Ee]) (.*)$', line)
-        code = re.match('^ +\|(.*)$', line)
-        fx_params = re.match('^ +(.*)(?:- )+$', line)
+        attribute = re.match(r'^ +([A-Z0-9_]+) (.*)$', line)
+        base64 = re.match(r'^ +[A-Za-z0-9+/]+={0,2}$', line)
+        midi = re.match(r'^ +([Ee]) (.*)$', line)
+        code = re.match(r'^ +\|(.*)$', line)
+        fx_params = re.match(r'^ +(.*)(?:- )+$', line)
         
         if midi:
             pass
