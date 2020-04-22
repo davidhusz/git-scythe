@@ -294,7 +294,7 @@ class modules:
 	@staticmethod
 	def cleanup():
 		parser = ScytheParser('cleanup')
-		parser.add_argument('directory', nargs = '?', default = '.', dest = 'origin')  # default should actually be the path of the rpp file i suppose
+		parser.add_argument('directory', nargs = '?', default = '.')  # default should actually be the path of the rpp file i suppose
 		parser.add_argument('--dry', action = 'store_true')  # dry run argument, might rename it still
 		args = parser.parse_args()
 		
