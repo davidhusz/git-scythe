@@ -21,12 +21,12 @@ from itertools import filterfalse
 import argparse
 
 
-class Tree:
+class ReaperProject:
     def __init__(self, inputstr = None):
         if inputstr:
             generator = (line for line in inputstr.splitlines())
             try:
-                return Tree.fromGenerator(generator)
+                return ReaperProject.fromGenerator(generator)
             except AssertionError:
                 sys.exit('this does not seem to be a reaper project')
     
@@ -42,9 +42,9 @@ class Tree:
     def fromGenerator(cls, generator):
         firstline = next(generator)
         assert firstline.startswith('<REAPER_PROJECT'), 'not a reaper project'
-        tree = cls()
-        tree.root = Node(firstline, generator)
-        return tree
+        reaperProject = cls()
+        reaperProject.root = Node(firstline, generator)
+        return reaperProject
     
     def find(self, *args, **kwargs):
         return next(self.findall(*args, **kwargs))
@@ -241,10 +241,10 @@ class modules:
     def tree():
         args = ScytheParser('tree').parse_args()
         
-        tree = Tree.fromFilepath(args.input)
+        reaperProject = ReaperProject.fromFilepath(args.input)
         if not args.quiet:
             print(f'Tree for {args.input}:')
-        tree.print()
+        reaperProject.print()
     
     @staticmethod
     def paths():
@@ -264,15 +264,15 @@ class modules:
         parser.add_argument('-e', '--escape', action = 'store_true')  # it should be noted that this only really works for the UNIX shell
         args = parser.parse_args()
         
-        tree = Tree.fromFilepath(args.input)
-        source_paths = tree.get_source_paths()  # default: <empty path>
+        reaperProject = ReaperProject.fromFilepath(args.input)
+        source_paths = reaperProject.get_source_paths()  # default: <empty path>
         if args.sort:
             source_paths.sort()
         
         if args.render_file or args.all:
-            render_path = tree.root['RENDER_FILE'][0]
+            render_path = reaperProject.root['RENDER_FILE'][0]
         if args.record_path or args.all:
-            primary_recording_path, secondary_recording_path = tree.root['RECORD_PATH']
+            primary_recording_path, secondary_recording_path = reaperProject.root['RECORD_PATH']
         
         if args.absolute:
             source_paths = filter(pathlib.PurePath.is_absolute, source_paths)
@@ -308,8 +308,8 @@ class modules:
         parser.add_argument('--dry', action = 'store_true')  # dry run argument, might rename it still
         args = parser.parse_args()
         
-        tree = Tree.fromFilepath(args.input)
-        source_paths = tree.get_paths()
+        reaperProject = ReaperProject.fromFilepath(args.input)
+        source_paths = reaperProject.get_paths()
         
         for dirpath, dirnames, filenames in os.walk(args.origin):
             # what you're gonna have to do here:
