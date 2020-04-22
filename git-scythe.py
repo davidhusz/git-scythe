@@ -311,7 +311,7 @@ class modules:
         reaperProject = ReaperProject.fromFilepath(args.input)
         source_paths = reaperProject.get_source_paths()
         
-        for dirpath, dirnames, filenames in os.walk(args.origin):
+        for dirpath, dirnames, filenames in os.walk(args.directory):
             # what you're gonna have to do here:
             # canonicalize both `filenames` as well as `source_paths`
             # (maybe rename that latter variable to something more explicit),
