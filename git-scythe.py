@@ -163,22 +163,6 @@ class Node:
 						yield match
 				if child.name == query:
 					yield child
-
-	# def print(self, level = 0):
-		# print(
-		# 	'  ' * level +
-		# 	'<' + self.name +
-		# 	' ' + ' '.join(self.tags)
-		# )
-		# for name, values in self.attributes.items():
-		# 	print(
-		# 		'  ' * (level + 1) +
-		# 		name +
-		# 		' ' + ' '.join(values)
-		# 	)
-		# for child in self.children:
-		# 	child.print(level + 1)
-		# print('  ' * level + '>')
 	
 	def print(self):
 		for content in self.contents:
