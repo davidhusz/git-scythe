@@ -38,9 +38,12 @@ class ReaperProject:
             sys.exit(f'{filepath} is not a regular file (i.e. a directory or mount point or the like)')  # tbfo
         with open(filepath) as file:
             try:
-                return cls.fromGenerator(file)
+                instance = cls.fromGenerator(file)
             except AssertionError:
                 sys.exit(f'{filepath} does not seem to be a reaper project')  # tbfo
+            instance.encoding = file.encoding
+            instance.line_terminator = file.newlines
+            return instance
     
     @classmethod
     def fromGenerator(cls, generator):
