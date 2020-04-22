@@ -266,6 +266,10 @@ class modules:
 		parser = ScytheParser('paths')
 		parser.add_argument('-a', '--absolute', action = 'store_true')
 		parser.add_argument('-r', '--relative', action = 'store_true')
+		parser.add_argument('-s', '--sort', action = 'store_true')
+		parser.add_argument('--render-file', action = 'store_true')
+		parser.add_argument('--record-path', action = 'store_true')
+		parser.add_argument('--all', action = 'store_true')  # equivalent to `--render-file --record-path`
 		parser.add_argument('-f', '--format', action = 'store')
 			# POSIX/UNIX or DOS/WINDOWS
 			# default value same as in input, otherwise dependent on operating system
@@ -277,6 +281,13 @@ class modules:
 
 		tree = Tree.fromFilepath(args.input)
 		source_paths = tree.get_source_paths()  # default: <empty path>
+		if args.sort:
+			source_paths.sort()
+		
+		if args.render_file or args.all:
+			render_path = tree.root['RENDER_FILE'][0]
+		if args.record_path or args.all:
+			primary_recording_path, secondary_recording_path = tree.root['RECORD_PATH']
 		
 		if args.absolute:
 			source_paths = filter(pathlib.PurePath.is_absolute, source_paths)
@@ -286,6 +297,18 @@ class modules:
 		source_paths = map(str, source_paths)
 		if args.escape:
 			source_paths = map(shlex.quote, source_paths)
+		
+		if args.render_file or args.all:
+			if not args.quiet:
+				print('Render path:', end = ' ')
+			print(render_path)
+		if args.record_path or args.all:
+			if not args.quiet:
+				print('Primary recording path:', end = ' ')
+			print(primary_recording_path)
+			if not args.quiet:
+				print('Secondary recording path:', end = ' ')
+			print(secondary_recording_path)
 		
 		if not args.quiet:
 			print(f'File paths found in {args.input}:')
