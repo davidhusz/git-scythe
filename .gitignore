@@ -1,4 +1,9 @@
 # ignore example input files
-*.RPP
-*.rpp
+testfiles/
+
+# ignore python cache
 __pycache__/
+
+# ignore testing utility
+# (only one command, can be easily recreated on other systems)
+test
