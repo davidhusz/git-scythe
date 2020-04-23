@@ -83,27 +83,36 @@ class ReaperProject:
                 paths.append(path)
         return paths
     
+    def __len__(self):
+        return len(self.root)
+    
     def print(self, file = sys.stdout):
         self.root.print(file = file)
 
 
 class Node:
-    def __init__(self, firstline, generator):
+    def __init__(self, firstline, generator, line_number = 1):
         self.name, self.tags = re.match(r'^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
         self.contents = [firstline]
         self.tags = shlex.split(self.tags)
         self.attributes = {}
+        self.start_in_file = line_number
         # self.attributes = []
         
         for line in generator:
+            line_number += 1
             opening_tag = re.match(r'^ *<([A-Z0-9_]+)(.*)$', line)
             closing_tag = re.match(r'^ *>$', line)
             
             if opening_tag:
-                child = Node(line, generator)
+                child = Node(line, generator, line_number)
                 self.contents.append(child)
+                line_number += len(child) - 1  # we have to subtract one here
+                                               # because we already added one
+                                               # at the start of the loop
             elif closing_tag:
                 self.contents.append(line)
+                self.end_in_file = line_number
                 break
             else:
                 self.contents.append(line)
@@ -154,6 +163,12 @@ class Node:
     def __getattr__(self, name):
         # return self.__getitem__(name)
         pass
+    
+    def __len__(self):
+        return self.end_in_file - self.start_in_file + 1  # here we have to add
+                                                          # one because otherwise
+                                                          # we'd just be describing
+                                                          # the range
     
     def __repr__(self):
         return f'<Node "{self.name}">'
