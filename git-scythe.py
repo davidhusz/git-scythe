@@ -264,6 +264,44 @@ class modules:
     and all the methods being static
     '''
     @staticmethod
+    def add_track():
+        parser = ScytheParser('add-track')
+        parser.add_argument('name', nargs = '?')  # if not provided, present
+                                                  # a numbered list of all
+                                                  # tracks and let the user
+                                                  # choose by number
+        args = parser.parse_args()
+        
+        # what you have to do here:
+        # - run `git show HEAD:{args.input}` (make sure you understand what HEAD
+        #   is first)
+        # - take the output of that and store it in `rpp_HEAD` or sth like that
+        # - get the contents of args.input and store them (unparsed) in `rpp_now`
+        #   (or sth like that)
+        # - use the `difflib` library to create a diff of the two
+        # - extract the part with the node of the track requested by the user
+        #   (use `Node.position_in_file` to find the line range of the track)
+        # - run `git apply --cached -` (maybe with `-v` option) and use the diff
+        #   as stdin for that (pay attention to line terminators and encoding!
+        #   in other words, you're gonna have to make sure `text = False`)
+        #
+        # or alternatively:
+        # - get the diff between the HEAD state and the current state of `args.input`
+        #   by running `git diff --no-color {args.input}`
+        # - extract the part with... (proceed as described above)
+        #
+        # whether you can use the ease of the second one or will have to resort to
+        # the first option will depend on how much the difflib library offers. if
+        # it offers full-on high-level diff objects then it would probably be
+        # smartest to use those
+        
+        reaperProject = ReaperProject.fromFilepath(args.input)
+        
+        for match in reaperProject.findall('TRACK', recursive = True):
+            if match['NAME'] == [args.name]:
+                track = match
+    
+    @staticmethod
     def paths():
         parser = ScytheParser('paths')
         parser.add_argument('-a', '--absolute', action = 'store_true')
@@ -372,7 +410,9 @@ if __name__ == '__main__':
     else:
         module = 'help'
     
-    if module == 'paths':
+    if module == 'add-track':
+        modules.add_track()
+    elif module == 'paths':
         modules.paths()
     elif module == 'cleanup':
         modules.cleanup()
