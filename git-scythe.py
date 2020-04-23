@@ -86,8 +86,8 @@ class ReaperProject:
     def __len__(self):
         return len(self.root)
     
-    def print(self, file = sys.stdout):
-        self.root.print(file = file)
+    def dump(self, file = sys.stdout):
+        self.root.dump(file = file)
 
 
 class Node:
@@ -191,10 +191,10 @@ class Node:
                 if child.name == query:
                     yield child
     
-    def print(self, file):
+    def dump(self, file):
         for content in self.contents:
             if isinstance(content, type(self)):
-                content.print(file = file)
+                content.dump(file = file)
             else:
                 print(content, end = '', file = file)
 
@@ -385,7 +385,7 @@ class modules:
         reaperProject = ReaperProject.fromFilepath(args.input)
         print(f'Creating {output}...')
         with open(output, mode = 'x', encoding = reaperProject.encoding, newline = reaperProject.line_terminator) as file:
-            reaperProject.print(file = file)
+            reaperProject.dump(file = file)
         
         diff = subprocess.run(
             ['diff', '-s', args.input, output],
