@@ -146,6 +146,10 @@ class Node:
     def children(self):
         return filter(lambda x: isinstance(x, type(self)), self.contents)
     
+    @property
+    def position_in_file(self):
+        return self.start_in_file, self.end_in_file
+    
     def __getitem__(self, key):
         if key in self.attributes:
             # attribute = self.attributes[key]
