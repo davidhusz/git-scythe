@@ -328,6 +328,30 @@ class modules:
             pass
     
     @staticmethod
+    def test():
+        parser = ScytheParser('test')
+        args = parser.parse_args()
+        output = args.input + '.copy'
+        
+        print(f'Parsing {args.input}...')
+        reaperProject = ReaperProject.fromFilepath(args.input)
+        print(f'Creating {output}...')
+        with open(output, mode = 'x', encoding = reaperProject.encoding, newline = reaperProject.line_terminator) as file:
+            reaperProject.print(file = file)
+        
+        diff = subprocess.run(
+            ['diff', '-s', args.input, output],
+            capture_output = True,
+            text = True
+        )
+        if diff.returncode == 0:
+            print('Success!', diff.stdout.strip())
+            os.remove(output)
+        else:
+            print('Oh no! Diff failed with the following output:')
+            sys.exit(diff.stdout.strip())
+    
+    @staticmethod
     def help(file = sys.stdout):
         print('help page should be printed here', file = file)
 
@@ -344,6 +368,8 @@ if __name__ == '__main__':
         modules.paths()
     elif module == 'cleanup':
         modules.cleanup()
+    elif module == 'test':
+        modules.test()
     elif module == 'help':
         modules.help()
     elif module == '--version':
