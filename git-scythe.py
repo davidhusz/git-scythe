@@ -245,15 +245,6 @@ class modules:
     and all the methods being static
     '''
     @staticmethod
-    def tree():
-        args = ScytheParser('tree').parse_args()
-        
-        reaperProject = ReaperProject.fromFilepath(args.input)
-        if not args.quiet:
-            print(f'Tree for {args.input}:')
-        reaperProject.print()
-    
-    @staticmethod
     def paths():
         parser = ScytheParser('paths')
         parser.add_argument('-a', '--absolute', action = 'store_true')
@@ -362,9 +353,7 @@ if __name__ == '__main__':
     else:
         module = 'help'
     
-    if module == 'tree':
-        modules.tree()
-    elif module == 'paths':
+    if module == 'paths':
         modules.paths()
     elif module == 'cleanup':
         modules.cleanup()
