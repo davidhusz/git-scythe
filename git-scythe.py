@@ -83,8 +83,8 @@ class ReaperProject:
                 paths.append(path)
         return paths
     
-    def print(self):
-        self.root.print()
+    def print(self, file = sys.stdout):
+        self.root.print(file = file)
 
 
 class Node:
@@ -172,12 +172,12 @@ class Node:
                 if child.name == query:
                     yield child
     
-    def print(self):
+    def print(self, file):
         for content in self.contents:
             if isinstance(content, type(self)):
-                content.print()
+                content.print(file = file)
             else:
-                print(content, end = '')
+                print(content, end = '', file = file)
 
 
 class Attribute:
