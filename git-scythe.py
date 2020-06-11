@@ -360,11 +360,12 @@ class modules:
     def cleanup():
         parser = ScytheParser('cleanup')
         parser.add_argument('directory', nargs = '?', default = '.')  # default should actually be the path of the rpp file i suppose
-        parser.add_argument('--dry', action = 'store_true')  # dry run argument, might rename it still
+        parser.add_argument('--dry-run', action = 'store_true')
         args = parser.parse_args()
         
         reaperProject = ReaperProject.fromFilepath(args.input)
         source_paths = reaperProject.get_source_paths()
+        render_path = reaperProject.root['RENDER_FILE'][0]
         
         for dirpath, dirnames, filenames in os.walk(args.directory):
             # what you're gonna have to do here:
