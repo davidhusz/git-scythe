@@ -18,6 +18,7 @@ import pathlib
 import shlex
 from glob import glob
 from itertools import filterfalse
+from collections import OrderedDict
 import argparse
 
 
@@ -307,6 +308,7 @@ class modules:
         parser.add_argument('-a', '--absolute', action = 'store_true')
         parser.add_argument('-r', '--relative', action = 'store_true')
         parser.add_argument('-s', '--sort', action = 'store_true')
+        parser.add_argument('-u', '--remove-duplicates', action = 'store_true')
         parser.add_argument('--render-file', action = 'store_true')
         parser.add_argument('--record-path', action = 'store_true')
         parser.add_argument('--all', action = 'store_true')  # equivalent to `--render-file --record-path`
@@ -324,6 +326,9 @@ class modules:
         
         if args.sort:
             source_paths.sort()
+        if args.remove_duplicates:
+            source_paths = list(OrderedDict.fromkeys(source_paths))
+                # this removes duplicates while maintaining order
         
         if args.all:
             args.render_file = True
