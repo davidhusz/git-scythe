@@ -321,12 +321,17 @@ class modules:
         
         reaperProject = ReaperProject.fromFilepath(args.input)
         source_paths = reaperProject.get_source_paths()  # default: <empty path>
+        
         if args.sort:
             source_paths.sort()
         
-        if args.render_file or args.all:
+        if args.all:
+            args.render_file = True
+            args.record_path = True
+        
+        if args.render_file:
             render_path = reaperProject.root['RENDER_FILE'][0]
-        if args.record_path or args.all:
+        if args.record_path:
             primary_recording_path, secondary_recording_path = reaperProject.root['RECORD_PATH']
         
         if args.absolute:
@@ -338,23 +343,31 @@ class modules:
         if args.escape:
             source_paths = map(shlex.quote, source_paths)
         
-        if args.render_file or args.all:
+        if args.render_file:
             if not args.quiet:
-                print('Render path:', end = ' ')
-            print(render_path)
-        if args.record_path or args.all:
+                print('Render file: '
+                    + (render_path or '<empty path>'))
+                    # the 'or' works like an elvis operator here
+            elif render_path:
+                print(render_path, end = args.delimiter)
+        if args.record_path:
             if not args.quiet:
-                print('Primary recording path:', end = ' ')
-            print(primary_recording_path)
-            if not args.quiet:
-                print('Secondary recording path:', end = ' ')
-            print(secondary_recording_path)
+                print('Primary recording path: '
+                    + (primary_recording_path or '<empty path>'))
+                print('Secondary recording path: '
+                    + (secondary_recording_path or '<empty path>'))
+            else:
+                if primary_recording_path:
+                    print(primary_recording_path, end = args.delimiter)
+                if secondary_recording_path:
+                    print(secondary_recording_path, end = args.delimiter)
         
         if not args.quiet:
             print(f'File paths found in {args.input}:')
         print(args.delimiter.join(source_paths))
-            # for some reason, if this is called with `-d ' '`, it raises an error:
-            # git scythe paths: error: argument -d/--delimiter: expected one argument
+            # for some reason, if this is called with `-d ' '` or `-d $'\n'`, it
+            # raises an error: git scythe paths: error: argument -d/--delimiter:
+            # expected one argument
     
     @staticmethod
     def cleanup():
