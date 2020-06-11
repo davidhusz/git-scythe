@@ -388,7 +388,7 @@ class modules:
             reaperProject.dump(file = file)
         
         diff = subprocess.run(
-            ['diff', '-s', args.input, output],
+            ['diff', '-qs', args.input, output],
             stdout = subprocess.PIPE,
             stderr = subprocess.PIPE,
             universal_newlines = True
