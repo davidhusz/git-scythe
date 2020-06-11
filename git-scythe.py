@@ -69,9 +69,6 @@ class ReaperProject:
     def get_source_paths(self):
         paths = []
         for source in self.findall('SOURCE', recursive = True):
-            # you will also need to account for tags FILE, RENDER_FILE and RECORD_PATH
-            # attributes: FILE (of tag SOURCE)
-            # tags: RENDER_FILE, RECORD_PATH
             if 'FILE' in source:
                 sourcefile = source['FILE'][0]
                 if '/' in sourcefile:
@@ -368,11 +365,11 @@ class modules:
         
         for dirpath, dirnames, filenames in os.walk(args.directory):
             # what you're gonna have to do here:
-            # canonicalize both `filenames` as well as `source_paths`
-            # (maybe rename that latter variable to something more explicit),
-            # then check which `filenames` do not appear in `source_paths`.
-            # perhaps provide an option to restrict the search to media files
-            # (based on the file extension)
+            # canonicalize both `filenames` as well as `source_paths` and
+            # `render_path`, then check which `filenames` do not appear in
+            # `source_paths` or match `render_path`. perhaps provide an option
+            # to restrict the search to media files (based on the file
+            # extension)
             pass
     
     @staticmethod
