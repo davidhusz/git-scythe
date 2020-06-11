@@ -239,14 +239,17 @@ class config:
         try:
             value = subprocess.run(
                 ['git', 'config', '--get', 'scythe.' + key],
-                capture_output = True,
-                text = True,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                universal_newlines = True,
                 check = True
             ).stdout.strip()
         except subprocess.CalledProcessError:
             subprocess.run(
                 ['git', 'config', '--add', 'scythe.' + key, default],
-                capture_output = True
+                stdout = subprocess.PIPE,
+                stderr = subprocess.PIPE,
+                universal_newlines = True
             )
             value = default
         
@@ -386,8 +389,9 @@ class modules:
         
         diff = subprocess.run(
             ['diff', '-s', args.input, output],
-            capture_output = True,
-            text = True
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
+            universal_newlines = True
         )
         if diff.returncode == 0:
             print('Success!', diff.stdout.strip())
