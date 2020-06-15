@@ -104,7 +104,7 @@ class Node:
             closing_tag = re.match(r'^ *>$', line)
             
             if opening_tag:
-                child = Node(line, generator, line_number)
+                child = Node.identify(line, generator, line_number)
                 self.contents.append(child)
                 line_number += len(child) - 1
                     # we have to subtract one here because we already added one
@@ -141,9 +141,16 @@ class Node:
         else:
             print('could not parse the following line:\n' + line, file = sys.stderr)
     
+    @classmethod
+    def identify(cls, firstline, *args, **kwargs):
+        node_name = re.match(r'^ *<([A-Z0-9_]+)', firstline).group(1)
+        node_class = {'TRACK': Track
+                     }.get(node_name, cls)
+        return node_class(firstline, *args, **kwargs)
+    
     @property
     def children(self):
-        return filter(lambda x: isinstance(x, type(self)), self.contents)
+        return filter(lambda x: isinstance(x, Node), self.contents)
     
     @property
     def position_in_file(self):
@@ -173,7 +180,7 @@ class Node:
             # the range
     
     def __repr__(self):
-        return f'<Node "{self.name}">'
+        return f'<{type(self).__name__} "{self.name}">'
     
     def findall(self, query, recursive = False):
         if '/' in query:
@@ -191,10 +198,14 @@ class Node:
     
     def dump(self, file):
         for content in self.contents:
-            if isinstance(content, type(self)):
+            if isinstance(content, Node):
                 content.dump(file = file)
             else:
                 print(content, end = '', file = file)
+
+
+class Track(Node):
+    pass
 
 
 class Attribute:
