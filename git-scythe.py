@@ -208,6 +208,20 @@ class Track(Node):
     pass
 
 
+class Path:
+    def __new__(cls, pathstr):
+        # perhaps you should handle the inference of the type of path globally
+        # instead of separately for each path
+        if '/' in pathstr:
+            return pathlib.PurePosixPath(pathstr)
+        elif '\\' in pathstr:
+            return pathlib.PureWindowsPath(pathstr)
+        elif pathstr:
+            return pathlib.PurePath(pathstr)
+        else:
+            return None
+
+
 class Attribute:
     def __init__(self, name, values):
         self.name = name
