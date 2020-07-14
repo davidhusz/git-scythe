@@ -80,6 +80,14 @@ class ReaperProject:
         self.root.dump(file = file)
 
 
+class GenericNode:
+    def __new__(cls, firstline, *args, **kwargs):
+        node_name = re.match(r'^ *<([A-Z0-9_]+)', firstline).group(1)
+        node_class = {'TRACK': Track
+                     }.get(node_name, Node)
+        return node_class(firstline, *args, **kwargs)
+
+
 class Node:
     def __init__(self, firstline, generator, line_number = 1):
         self.name, self.tags = re.match(r'^ *<([A-Z0-9_]+)(.*)$', firstline).groups()
@@ -95,7 +103,7 @@ class Node:
             closing_tag = re.match(r'^ *>$', line)
             
             if opening_tag:
-                child = Node.identify(line, generator, line_number)
+                child = GenericNode(line, generator, line_number)
                 self.contents.append(child)
                 line_number += len(child) - 1
                     # we have to subtract one here because we already added one
@@ -131,13 +139,6 @@ class Node:
             pass
         else:
             print('could not parse the following line:\n' + line, file = sys.stderr)
-    
-    @classmethod
-    def identify(cls, firstline, *args, **kwargs):
-        node_name = re.match(r'^ *<([A-Z0-9_]+)', firstline).group(1)
-        node_class = {'TRACK': Track
-                     }.get(node_name, cls)
-        return node_class(firstline, *args, **kwargs)
     
     @property
     def children(self):
