@@ -121,7 +121,7 @@ class Node:
         base64 = re.match(r'^ +[A-Za-z0-9+/]+={0,2}$', line)
         midi = re.match(r'^ +([Ee]) (.*)$', line)
         code = re.match(r'^ +\|(.*)$', line)
-        fx_params = re.match(r'^ +(.*)(?:- )+$', line)
+        fx_params = re.match(r'^ +(.*)(?:- )+-?$', line)
         
         if midi:
             pass
