@@ -339,7 +339,7 @@ class modules:
         parser.add_argument('--record-path', action = 'store_true')
         parser.add_argument('--all', action = 'store_true')
             # equivalent to `--render-file --record-path`
-        parser.add_argument('-f', '--format', action = 'store')
+        parser.add_argument('-f', '--format', action = 'store', type = str.upper, choices = ['POSIX', 'UNIX', 'DOS', 'WINDOWS'])
             # POSIX/UNIX or DOS/WINDOWS
             # default value same as in input, otherwise dependent on operating system
             # have a look at maybe using the class argparse.ArgumentError
