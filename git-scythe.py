@@ -69,18 +69,9 @@ class ReaperProject:
             return self.root.findall(query, recursive)
     
     def get_source_paths(self):
-        paths = []
-        for source in self.findall('SOURCE', recursive = True):
-            if 'FILE' in source:
-                sourcefile = source['FILE'][0]
-                if '/' in sourcefile:
-                    path = pathlib.PurePosixPath(sourcefile)
-                elif '\\' in sourcefile:
-                    path = pathlib.PureWindowsPath(sourcefile)
-                else:
-                    path = pathlib.PurePath(sourcefile)
-                paths.append(path)
-        return paths
+        return [Path(source['FILE'][0]) \
+                for source in self.findall('SOURCE', recursive = True) \
+                if 'FILE' in source]
     
     def __len__(self):
         return len(self.root)
