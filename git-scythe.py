@@ -342,6 +342,20 @@ class modules:
             # it should be noted that this only really works for the UNIX shell
         args = parser.parse_args()
         
+        def format(path):
+            if path is not None:
+                if args.format in ('POSIX', 'UNIX'):
+                    formatted = str(pathlib.PurePosixPath(path))
+                elif args.format in ('DOS', 'WINDOWS'):
+                    formatted = str(pathlib.PureWindowsPath(path))
+                else:
+                    formatted = str(path)
+                if args.escape:
+                    formatted = shlex.quote(formatted)
+            else:
+                formatted = '' if args.quiet else '<empty path>'
+            return formatted
+        
         reaperProject = ReaperProject.fromFilepath(args.input)
         source_paths = reaperProject.get_source_paths()
         
@@ -361,41 +375,34 @@ class modules:
             args.record_path = True
         
         if args.render_file:
-            render_path = reaperProject.root['RENDER_FILE'][0]
+            render_path = Path(reaperProject.root['RENDER_FILE'][0])
         if args.record_path:
-            primary_recording_path, secondary_recording_path = reaperProject.root['RECORD_PATH']
+            primary_recording_path = Path(reaperProject.root['RECORD_PATH'][0])
+            secondary_recording_path = Path(reaperProject.root['RECORD_PATH'][1])
         
         if args.absolute:
             source_paths = filter(pathlib.PurePath.is_absolute, source_paths)
         elif args.relative:
             source_paths = filterfalse(pathlib.PurePath.is_absolute, source_paths)
         
-        source_paths = map(str, source_paths)
-        if args.escape:
-            source_paths = map(shlex.quote, source_paths)
-        
         if args.render_file:
             if not args.quiet:
-                print('Render file: '
-                    + (render_path or '<empty path>'))
-                    # the 'or' works like an elvis operator here
+                print(f'Render file: ' + format(render_path))
             elif render_path:
-                print(render_path, end = args.delimiter)
+                print(format(render_path), end = args.delimiter)
         if args.record_path:
             if not args.quiet:
-                print('Primary recording path: '
-                    + (primary_recording_path or '<empty path>'))
-                print('Secondary recording path: '
-                    + (secondary_recording_path or '<empty path>'))
+                print(f'Primary recording path: ' + format(primary_recording_path))
+                print(f'Secondary recording path: ' + format(secondary_recording_path))
             else:
                 if primary_recording_path:
-                    print(primary_recording_path, end = args.delimiter)
+                    print(format(primary_recording_path), end = args.delimiter)
                 if secondary_recording_path:
-                    print(secondary_recording_path, end = args.delimiter)
+                    print(format(secondary_recording_path), end = args.delimiter)
         
         if not args.quiet:
             print(f'File paths found in {args.input}:')
-        print(args.delimiter.join(source_paths))
+        print(args.delimiter.join(map(format, source_paths)))
             # for some reason, if this is called with `-d ' '` or `-d $'\n'`, it
             # raises an error: git scythe paths: error: argument -d/--delimiter:
             # expected one argument
