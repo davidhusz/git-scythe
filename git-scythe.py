@@ -224,8 +224,8 @@ class Attribute:
 
 
 class ScytheParser(argparse.ArgumentParser):
-    def __init__(self, module_name):
-        super().__init__(prog = 'git scythe ' + module_name, add_help = False)
+    def __init__(self, subcommand_name):
+        super().__init__(prog = 'git scythe ' + subcommand_name, add_help = False)
         self.add_argument('input', nargs = '?')
         self.add_argument('-q', '--quiet', action = 'store_true')
         self.add_argument('--help', action = 'help')
@@ -250,7 +250,7 @@ class ScytheParser(argparse.ArgumentParser):
 
 
 class config:
-    # this class works similarly to the class modules,
+    # this class works similarly to the class subcommands,
     # see that class's docstring
     @staticmethod
     def get(key, default):
@@ -274,7 +274,7 @@ class config:
         return value
 
 
-class modules:
+class subcommands:
     '''
     this class serves only as a sort of grouping
     for the functions associated with the various
@@ -461,24 +461,24 @@ class modules:
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        module = sys.argv[1]
+        subcommand = sys.argv[1]
     else:
-        module = 'help'
+        subcommand = 'help'
     
     # you really should be using argparse's subcommand functionality here
-    if module == 'add-track':
-        modules.add_track()
-    elif module == 'paths':
-        modules.paths()
-    elif module == 'cleanup':
-        modules.cleanup()
-    elif module == 'test':
-        modules.test()
-    elif module == 'help':
-        modules.help()
-    elif module == '--version':
+    if subcommand == 'add-track':
+        subcommands.add_track()
+    elif subcommand == 'paths':
+        subcommands.paths()
+    elif subcommand == 'cleanup':
+        subcommands.cleanup()
+    elif subcommand == 'test':
+        subcommands.test()
+    elif subcommand == 'help':
+        subcommands.help()
+    elif subcommand == '--version':
         print('0.0')
         sys.exit()
     else:
-        print('unknown module:', module, file = sys.stderr)
-        modules.help(file = sys.stderr)
+        print('unknown subcommand:', subcommand, file = sys.stderr)
+        subcommands.help(file = sys.stderr)
