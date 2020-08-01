@@ -474,5 +474,8 @@ if __name__ == '__main__':
         parser.print_help()
         exit()
     
-    args, _ = parser.parse_known_args()
-    args.which.run()
+    args, rest = parser.parse_known_args()
+    if hasattr(args, 'which'):
+        args.which.run()
+    else:
+        parser.parse_args(rest)
