@@ -9,6 +9,7 @@
 # what about 'TAKE'?
 # handle empty input files gracefully
 # tbfo == "to be fleshed out"
+# add docstrings
 
 
 import sys
@@ -231,7 +232,7 @@ class ScytheParser(argparse.ArgumentParser):
         self.add_argument('-q', '--quiet', action = 'store_true')
         self.add_argument('--help', action = 'help')
         # putting these two arguments here rather than in __init__ because we'd
-        # like them to appear at the end
+        # like them to appear at the end of the argument list
         args = super().parse_args(sys.argv[2:])
         
         if not args.input:
@@ -311,6 +312,7 @@ class subcommands:
         # to the first option will depend on how much the difflib library
         # offers. if it offers full-on high-level diff objects then it would
         # probably be smartest to use those
+        # you also did some experimenting in Documents/difftest
         
         reaperProject = ReaperProject.fromFilepath(args.input)
         
@@ -405,11 +407,16 @@ class subcommands:
             # for some reason, if this is called with `-d ' '` or `-d $'\n'`, it
             # raises an error: git scythe paths: error: argument -d/--delimiter:
             # expected one argument
+            # TODO: do not print superfluous newline if `source_paths` is empty
     
     @staticmethod
     def cleanup(parser):
         parser.add_argument('directory', nargs = '?', default = '.')
             # default should actually be the path of the rpp file i suppose
+            # also, this is a subcommand where the user should have the option
+            # of specifying multiple input files (and this should have the same
+            # effect as calling Reaper's "clean current project directory" while
+            # having multiple projects open)
         parser.add_argument('--dry-run', action = 'store_true')
         args = parser.parse_args()
         
@@ -424,6 +431,9 @@ class subcommands:
             # `source_paths` or match `render_path`. perhaps provide an option
             # to restrict the search to media files (based on the file
             # extension)
+            # also, issue a warning if there are multiple .rpp files in the
+            # folder of the input .rpp file saying that media files belonging to
+            # other projects might be deleted as well
             pass
     
     @staticmethod
