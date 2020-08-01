@@ -48,7 +48,10 @@ class ReaperProject:
     
     @classmethod
     def fromGenerator(cls, generator):
-        firstline = next(generator)
+        try:
+            firstline = next(generator)
+        except StopIteration:
+            assert False, 'empty input'
         assert firstline.startswith('<REAPER_PROJECT'), 'not a reaper project'
         reaperProject = cls()
         reaperProject.root = Node(firstline, generator)
