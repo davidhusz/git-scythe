@@ -237,17 +237,13 @@ class ScytheParser(argparse.ArgumentParser):
         args = super().parse_args(sys.argv[2:])
         
         if not args.input:
-            missinginputwarning = config.get('missinginputwarning', default = 'true')
-            if missinginputwarning == 'true':
-                print(
-                    'you did not specify an input file, will use last accessed file\n'
-                    'you can turn off this warning with\n'
-                    'git config scythe.missinginputwarning false',
-                    file = sys.stderr
-                )
-            
-            files = filter(os.path.isfile, glob('*.rpp') + glob('*.RPP'))
-            args.input = max(files, key = os.path.getatime)
+            rpp_files = list(filter(os.path.isfile, glob('*.rpp') + glob('*.RPP')))
+            if len(rpp_files) == 1:
+                args.input = rpp_files[0]
+            elif len(rpp_files) == 0:
+                sys.exit('there are no reaper files in the current directory, please specify an input file')
+            else:
+                sys.exit('there are multiple reaper files in the current directory, please specify an input file')
         
         return args
     
