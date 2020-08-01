@@ -246,7 +246,7 @@ class ScytheParser(argparse.ArgumentParser):
                     file = sys.stderr
                 )
             
-            files = filter(os.path.isfile, glob('*.RPP'))
+            files = filter(os.path.isfile, glob('*.rpp') + glob('*.RPP'))
             args.input = max(files, key = os.path.getatime)
         
         return args
