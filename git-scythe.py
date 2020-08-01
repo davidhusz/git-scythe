@@ -36,8 +36,6 @@ class ReaperProject:
     def fromFilepath(cls, filepath):
         if not os.path.exists(filepath):
             sys.exit(f'{filepath} does not exist')  # tbfo
-        elif not os.path.isfile(filepath):
-            sys.exit(f'{filepath} is not a regular file (i.e. a directory or mount point or the like)')  # tbfo
         with open(filepath) as file:
             try:
                 instance = cls.fromGenerator(file)
@@ -237,7 +235,7 @@ class ScytheParser(argparse.ArgumentParser):
         args = super().parse_args(sys.argv[2:])
         
         if not args.input:
-            rpp_files = list(filter(os.path.isfile, glob('*.rpp') + glob('*.RPP')))
+            rpp_files = glob('*.rpp') + glob('*.RPP')
             if len(rpp_files) == 1:
                 args.input = rpp_files[0]
             elif len(rpp_files) == 0:
