@@ -224,13 +224,16 @@ class Attribute:
 
 
 class ScytheParser(argparse.ArgumentParser):
-    def __init__(self, subcommand_name):
-        super().__init__(prog = 'git scythe ' + subcommand_name, add_help = False)
+    def __init__(self, cmd, *args, **kwargs):
+        super().__init__(*args, **kwargs, add_help = False)
+        self.cmd = cmd
         self.add_argument('input', nargs = '?')
-        self.add_argument('-q', '--quiet', action = 'store_true')
-        self.add_argument('--help', action = 'help')
     
     def parse_args(self):
+        self.add_argument('-q', '--quiet', action = 'store_true')
+        self.add_argument('--help', action = 'help')
+        # putting these two arguments here rather than in __init__ because we'd
+        # like them to appear at the end
         args = super().parse_args(sys.argv[2:])
         
         if not args.input:
@@ -247,6 +250,9 @@ class ScytheParser(argparse.ArgumentParser):
             args.input = max(files, key = os.path.getatime)
         
         return args
+    
+    def run(self):
+        self.cmd(self)
 
 
 class config:
@@ -282,8 +288,7 @@ class subcommands:
     and all the methods being static
     '''
     @staticmethod
-    def add_track():
-        parser = ScytheParser('add-track')
+    def add_track(parser):
         parser.add_argument('name', nargs = '?')
             # if not provided, present a numbered list of all tracks and let the
             # user choose by number
@@ -320,8 +325,7 @@ class subcommands:
                 track = match
     
     @staticmethod
-    def paths():
-        parser = ScytheParser('paths')
+    def paths(parser):
         parser.add_argument('-a', '--absolute', action = 'store_true')
         parser.add_argument('-r', '--relative', action = 'store_true')
         parser.add_argument('-s', '--sort', action = 'store_true')
@@ -409,8 +413,7 @@ class subcommands:
             # expected one argument
     
     @staticmethod
-    def cleanup():
-        parser = ScytheParser('cleanup')
+    def cleanup(parser):
         parser.add_argument('directory', nargs = '?', default = '.')
             # default should actually be the path of the rpp file i suppose
         parser.add_argument('--dry-run', action = 'store_true')
@@ -430,8 +433,7 @@ class subcommands:
             pass
     
     @staticmethod
-    def test():
-        parser = ScytheParser('test')
+    def test(parser):
         args = parser.parse_args()
         output = args.input + '.copy'
         
@@ -453,32 +455,24 @@ class subcommands:
         else:
             print('Oh no! Diff failed with the following output:')
             sys.exit(diff.stdout.strip())
-    
-    @staticmethod
-    def help(file = sys.stdout):
-        print('help page should be printed here', file = file)
-
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        subcommand = sys.argv[1]
-    else:
-        subcommand = 'help'
+    parser = argparse.ArgumentParser('git scythe', add_help = False)
+    parser.add_argument('--version', version = '0.0', action = 'version')
+    parser.add_argument('--help', action = 'help')
     
-    # you really should be using argparse's subcommand functionality here
-    if subcommand == 'add-track':
-        subcommands.add_track()
-    elif subcommand == 'paths':
-        subcommands.paths()
-    elif subcommand == 'cleanup':
-        subcommands.cleanup()
-    elif subcommand == 'test':
-        subcommands.test()
-    elif subcommand == 'help':
-        subcommands.help()
-    elif subcommand == '--version':
-        print('0.0')
-        sys.exit()
-    else:
-        print('unknown subcommand:', subcommand, file = sys.stderr)
-        subcommands.help(file = sys.stderr)
+    commands = {'add-track': subcommands.add_track,
+                'paths': subcommands.paths,
+                'cleanup': subcommands.cleanup,
+                'test': subcommands.test}
+    subparsers = parser.add_subparsers(parser_class = ScytheParser, metavar = '|'.join(commands))
+    for command_name, command in commands.items():
+        subparser = subparsers.add_parser(command_name, cmd = command)
+        subparser.set_defaults(which = subparser)
+    
+    if len(sys.argv) == 1 or sys.argv[1] == 'help':
+        parser.print_help()
+        exit()
+    
+    args, _ = parser.parse_known_args()
+    args.which.run()
